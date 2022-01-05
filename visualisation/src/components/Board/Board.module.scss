@@ -1,0 +1,139 @@
+.board {
+  width: 90vh;
+  height: 90vh;
+
+  div {
+    border: 1px solid #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.road {
+  background-color: #fff;
+}
+
+.no_road {
+  background-color: black;
+}
+
+.middle_cell {
+  background: #ddd !important;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.down_direction {
+  background: url("../../assets/icons/down_arrow.svg") no-repeat center;
+  background-size: 15px;
+  position: relative;
+  &::after {
+    content: "2";
+    position: absolute;
+    top: -30px;
+    font-size: 18px;
+    font-style: bold;
+  }
+}
+
+.down_right_direction {
+  background: url("../../assets/icons/down_right_arrow.svg") no-repeat center;
+  background-size: 20px;
+  position: relative;
+
+  &::after {
+    content: "1";
+    position: absolute;
+    top: -30px;
+    font-size: 18px;
+    font-style: bold;
+  }
+}
+
+.up_direction {
+  background: url("../../assets/icons/up_arrow.svg") no-repeat center;
+  background-size: 15px;
+
+  position: relative;
+  &::after {
+    content: "6";
+    position: absolute;
+    top: 30px;
+    font-size: 18px;
+    font-style: bold;
+  }
+}
+
+.up_right_direction {
+  background: url("../../assets/icons/up_right_arrow.svg") no-repeat center;
+  background-size: 20px;
+
+  position: relative;
+  &::after {
+    content: "5";
+    position: absolute;
+    top: 30px;
+    font-size: 18px;
+    font-style: bold;
+  }
+}
+
+.right_direction {
+  background: url("../../assets/icons/right_arrow.svg") no-repeat center;
+  background-size: 15px;
+
+  position: relative;
+  &::after {
+    content: "8";
+    position: absolute;
+    left: -30px;
+    font-size: 18px;
+    font-style: bold;
+  }
+}
+
+.right_right_direction {
+  background: url("../../assets/icons/right_right_arrow.svg") no-repeat center;
+  background-size: 20px;
+
+  position: relative;
+  &::after {
+    content: "7";
+    position: absolute;
+    left: -30px;
+    font-size: 18px;
+    font-style: bold;
+  }
+}
+
+.left_direction {
+  background: url("../../assets/icons/left_arrow.svg") no-repeat center;
+  background-size: 15px;
+
+  position: relative;
+  &::after {
+    content: "4";
+    position: absolute;
+    left: 30px;
+    font-size: 18px;
+    font-style: bold;
+  }
+}
+
+.left_right_direction {
+  background: url("../../assets/icons/left_right_arrow.svg") no-repeat center;
+  background-size: 20px;
+
+  position: relative;
+  &::after {
+    content: "3";
+    position: absolute;
+    left: 30px;
+    font-size: 18px;
+    font-style: bold;
+  }
+}
