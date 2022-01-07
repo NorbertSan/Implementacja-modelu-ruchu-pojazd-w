@@ -5,6 +5,7 @@
 // needs to be even number
 int BOARD_SIZE = 30;
 int MAX_SPEED = 4;
+// na razie musi byc =1, jest to zwiazane z sprawdzaniem wolnego skrzyzowania przy jezdzie na wprost
 int MAX_SPEED_IN_THE_CROSS = 1;
 
 // in percentage

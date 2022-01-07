@@ -18,7 +18,7 @@ class Board
   void align_grid_and_temp_grid();
   bool is_cell_in_the_middle_of_cross(int cell_index);
   int calculate_new_speed_riding_straight(CELL_DIRECTION direction, int cell_index);
-  bool can_move_to_cell_in_the_middle(int desired_cell_index, CELL_DIRECTION current_car_direction);
+  bool can_move_to_cell_in_the_middle(int desired_cell_index, CELL_DIRECTION current_car_direction, bool will_be_turning);
 
 public:
   Board();
