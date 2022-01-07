@@ -4,7 +4,8 @@
 
 // needs to be even number
 int BOARD_SIZE = 30;
-int MAX_SPEED = 4;
+int MAX_POSSIBLE_SPEED = 5;
+int MAX_SPEED = 3;
 // na razie musi byc =1, jest to zwiazane z sprawdzaniem wolnego skrzyzowania przy jezdzie na wprost
 int MAX_SPEED_IN_THE_CROSS = 1;
 
@@ -12,6 +13,31 @@ int MAX_SPEED_IN_THE_CROSS = 1;
 int RANDOM_BRAKING_PROBABILITY = 10;
 
 std::string error = "";
+
+int get_random_braking_probability()
+{
+  return RANDOM_BRAKING_PROBABILITY;
+}
+
+void set_random_braking_probability(int NEW_RANDOM_BRAKING_PROBABILITY)
+{
+  RANDOM_BRAKING_PROBABILITY = NEW_RANDOM_BRAKING_PROBABILITY;
+}
+
+int get_max_possible_speed()
+{
+  return MAX_POSSIBLE_SPEED;
+}
+
+int get_max_speed()
+{
+  return MAX_SPEED;
+}
+
+void set_max_speed(int NEW_MAX_SPEED)
+{
+  MAX_SPEED = NEW_MAX_SPEED;
+}
 
 std::string
 get_error()

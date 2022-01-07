@@ -1,14 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { SIMULATION_UPDATE_TIME_INTERVAL } from "../constants/timers";
 
-const useUpdatePositions = (boardObject, WasmModule) => {
+const useUpdatePositions = (boardObject, WasmModule, simulationStatus) => {
   const [boardOccupancyVector, setBoardOccupancyVector] = useState([]);
+  const [updatesAmount, setUpdatesAmount] = useState(0);
+  const [currentCarsAmount, setCurrentCarsAmount] = useState(0);
+
   const intervalRef = useRef(null);
 
   const setUpdatePositionsInterval = () => {
+    let updatesAmountTemp = updatesAmount;
+
     const interval = setInterval(() => {
       boardObject.update_positions();
       setBoardOccupancyVector(boardObject.get_occupied_board());
+      setCurrentCarsAmount(boardObject.get_current_cars_amount());
+
+      updatesAmountTemp++;
+      setUpdatesAmount(updatesAmountTemp);
 
       const error = WasmModule.get_error();
       if (error) console.error(error);
@@ -17,8 +26,10 @@ const useUpdatePositions = (boardObject, WasmModule) => {
   };
 
   const clearUpdatePositionsInterval = () => {
-    clearInterval(intervalRef.current);
-    intervalRef.current = null;
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
   };
 
   useEffect(() => {
@@ -29,12 +40,19 @@ const useUpdatePositions = (boardObject, WasmModule) => {
   }, [boardObject]);
 
   useEffect(() => {
-    if (!boardObject) return;
+    if (
+      !boardObject ||
+      (intervalRef.current && simulationStatus) ||
+      (!intervalRef.current && !simulationStatus)
+    )
+      return;
 
-    boardObject.get_occupied_board();
-  }, [boardObject]);
+    if (!simulationStatus) clearUpdatePositionsInterval();
 
-  return { boardOccupancyVector };
+    if (simulationStatus) setUpdatePositionsInterval();
+  }, [simulationStatus]);
+
+  return { boardOccupancyVector, updatesAmount, currentCarsAmount };
 };
 
 export default useUpdatePositions;

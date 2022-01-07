@@ -3,6 +3,8 @@
 
 extern int BOARD_SIZE;
 
+extern int MAX_POSSIBLE_SPEED;
+
 extern int MAX_SPEED;
 
 extern int MAX_SPEED_IN_THE_CROSS;
@@ -26,8 +28,17 @@ enum TURNING_DIRECTION
     TURNING_RIGHT
 };
 
-// will be used to get board size from javascript code
 int get_board_size();
+
+int get_random_braking_probability();
+
+void set_random_braking_probability(int NEW_RANDOM_BRAKING_PROBABILITY);
+
+int get_max_possible_speed();
+
+int get_max_speed();
+
+void set_max_speed(int NEW_MAX_SPEED);
 
 std::string get_error();
 

@@ -37,9 +37,10 @@ const Board = ({
         [styles.no_road]: !Boolean(roadVector.get(i)),
         [styles[directionClass]]: styles[directionClass],
         [styles.middle_cell]: isElementInVector(middleCellIndexes, i),
+        [styles.main_road]: i === 222 || i === 648,
       });
 
-      boardCells.push(<div key={i} className={className} />);
+      boardCells.push(<div id={i} key={i} className={className} />);
     }
     setCells(boardCells);
   }, [roadVector, middleCellIndexes]);

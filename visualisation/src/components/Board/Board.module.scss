@@ -2,6 +2,8 @@
   width: 90vh;
   height: 90vh;
 
+  align-self: center;
+
   div {
     border: 1px solid #aaa;
     display: flex;
@@ -41,7 +43,8 @@
 }
 
 .down_right_direction {
-  background: url("../../assets/icons/down_right_arrow.svg") no-repeat center;
+  // background: url("../../assets/icons/down_right_arrow.svg") no-repeat center;
+  background: url("../../assets/icons/left_arrow.svg") no-repeat center;
   background-size: 20px;
   position: relative;
 
@@ -69,7 +72,8 @@
 }
 
 .up_right_direction {
-  background: url("../../assets/icons/up_right_arrow.svg") no-repeat center;
+  // background: url("../../assets/icons/up_right_arrow.svg") no-repeat center;
+  background: url("../../assets/icons/right_arrow.svg") no-repeat center;
   background-size: 20px;
 
   position: relative;
@@ -97,7 +101,8 @@
 }
 
 .right_right_direction {
-  background: url("../../assets/icons/right_right_arrow.svg") no-repeat center;
+  // background: url("../../assets/icons/right_right_arrow.svg") no-repeat center;
+  background: url("../../assets/icons/down_arrow.svg") no-repeat center;
   background-size: 20px;
 
   position: relative;
@@ -125,7 +130,8 @@
 }
 
 .left_right_direction {
-  background: url("../../assets/icons/left_right_arrow.svg") no-repeat center;
+  // background: url("../../assets/icons/left_right_arrow.svg") no-repeat center;
+  background: url("../../assets/icons/up_arrow.svg") no-repeat center;
   background-size: 20px;
 
   position: relative;
@@ -136,4 +142,8 @@
     font-size: 18px;
     font-style: bold;
   }
+}
+.main_road {
+  background: url("../../assets/icons/main_road.svg") no-repeat center;
+  background-size: 30px;
 }

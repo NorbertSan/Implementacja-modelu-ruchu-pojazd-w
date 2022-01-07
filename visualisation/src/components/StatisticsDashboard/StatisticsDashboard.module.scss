@@ -1,0 +1,15 @@
+.wrapper {
+  margin-top: 100px;
+  padding: 20px;
+  line-height: 1.5;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 50px;
+}

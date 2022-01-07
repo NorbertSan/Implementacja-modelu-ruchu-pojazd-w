@@ -1,0 +1,26 @@
+.font-md {
+  font-size: 20px;
+}
+
+.m-x {
+  margin: 0 8px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  margin-bottom: 50px;
+  align-items: center;
+}
+
+.simulation-state-container {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 100px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+}
