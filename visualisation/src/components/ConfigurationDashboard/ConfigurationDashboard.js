@@ -10,6 +10,9 @@ const ConfigurationDashboard = ({
   WasmModule,
   toggleSimulationStatus,
   simulationStatus,
+  setSimulationOneRoundIntervalTime,
+  simulationOneRoundIntervalTime,
+  hasSimulationFinished,
 }) => {
   const [maxSpeed, setMaxSpeed] = useState(null);
   const [maxPossibleSpeed, setMaxPossibleSpeed] = useState(null);
@@ -44,6 +47,12 @@ const ConfigurationDashboard = ({
     setRandomBrakingProbability(newValue);
   };
 
+  const handleSimulationOneRoundIntervalTimeChange = (event) => {
+    const newValue = Number(event.target.value);
+    if (newValue < 1) return;
+    setSimulationOneRoundIntervalTime(newValue);
+  };
+
   return (
     <div>
       <div className={styles.container}>
@@ -70,19 +79,31 @@ const ConfigurationDashboard = ({
           </Button>
         </div>
       </div>
+
       <div className={styles.container}>
         <span>Prawdopodobieństwo losowego zahamowania (%): </span>
         <TextField
           value={randomBrakingProbability}
           size="small"
           id="outlined-number"
-          label="Number"
           type="number"
           onChange={handleBrakingProbabilityChange}
         />
       </div>
+
+      <div className={styles.container}>
+        <span>Szybkość odświeżania symulacji (ms)</span>
+        <TextField
+          value={simulationOneRoundIntervalTime}
+          size="small"
+          id="outlined-number"
+          type="number"
+          onChange={handleSimulationOneRoundIntervalTimeChange}
+        />
+      </div>
       <div className={styles["simulation-state-container"]}>
         <Button
+          disabled={hasSimulationFinished}
           onClick={toggleSimulationStatus}
           size="large"
           variant="contained"

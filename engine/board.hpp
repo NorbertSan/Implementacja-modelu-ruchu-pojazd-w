@@ -10,6 +10,7 @@ class Board
 {
   int generated_cars_amount;
   int current_cars_amount;
+  bool simulation_status;
   std::vector<std::unique_ptr<Cell>> grid;
   std::vector<std::unique_ptr<Cell>> temp_grid;
   std::vector<int> middle_cell_indexes;
@@ -34,5 +35,6 @@ public:
   void generate_new_cars(int new_current_car_direction, int new_desired_car_direction);
   std::vector<int> get_occupied_board();
   std::vector<int> get_road_board();
+  void set_simulation_status(bool new_simulation_status);
 };
 #endif

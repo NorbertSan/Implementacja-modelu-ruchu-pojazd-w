@@ -1,12 +1,14 @@
 import styles from "./StatisticsDashboard.module.scss";
 import Box from "@mui/material/Box";
 import { useEffect, useState } from "react";
+import cx from "classnames";
 
 const StatisticsDashboard = ({
   updatesAmount,
   generatedCarsAmount,
   currentCarsAmount,
   generatedCarsPerRoute,
+  hasSimulationFinished,
 }) => {
   const [carsPerRouteDivs, setCarsPerRouteDivs] = useState([]);
 
@@ -31,7 +33,11 @@ const StatisticsDashboard = ({
       <div className={styles.wrapper}>
         <h3 className={styles.title}>Statystyki</h3>
 
-        <div className={styles.grid}>
+        <div
+          className={cx(styles.grid, {
+            [styles.success]: hasSimulationFinished,
+          })}
+        >
           <span>Liczba okrążeń:</span>
           <span>{updatesAmount}</span>
         </div>

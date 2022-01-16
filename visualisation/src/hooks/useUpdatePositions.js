@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { SIMULATION_UPDATE_TIME_INTERVAL } from "../constants/timers";
 
-const useUpdatePositions = (boardObject, WasmModule, simulationStatus) => {
+const useUpdatePositions = (
+  boardObject,
+  WasmModule,
+  simulationStatus,
+  simulationOneRoundIntervalTime,
+  hasSimulationFinished
+) => {
   const [boardOccupancyVector, setBoardOccupancyVector] = useState([]);
   const [updatesAmount, setUpdatesAmount] = useState(0);
   const [currentCarsAmount, setCurrentCarsAmount] = useState(0);
@@ -21,7 +26,7 @@ const useUpdatePositions = (boardObject, WasmModule, simulationStatus) => {
 
       const error = WasmModule.get_error();
       if (error) console.error(error);
-    }, SIMULATION_UPDATE_TIME_INTERVAL);
+    }, simulationOneRoundIntervalTime);
     intervalRef.current = interval;
   };
 
@@ -51,6 +56,19 @@ const useUpdatePositions = (boardObject, WasmModule, simulationStatus) => {
 
     if (simulationStatus) setUpdatePositionsInterval();
   }, [simulationStatus]);
+
+  useEffect(() => {
+    if (!boardObject) return;
+
+    clearUpdatePositionsInterval();
+    setUpdatePositionsInterval();
+  }, [simulationOneRoundIntervalTime]);
+
+  useEffect(() => {
+    if (!boardObject || !hasSimulationFinished) return;
+
+    clearUpdatePositionsInterval();
+  }, [hasSimulationFinished]);
 
   return { boardOccupancyVector, updatesAmount, currentCarsAmount };
 };

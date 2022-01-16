@@ -37,7 +37,15 @@ const Board = ({
         [styles.no_road]: !Boolean(roadVector.get(i)),
         [styles[directionClass]]: styles[directionClass],
         [styles.middle_cell]: isElementInVector(middleCellIndexes, i),
-        [styles.main_road]: i === 222 || i === 648,
+        [styles.main_road]:
+          process.env.REACT_APP_CROSSROAD_VERSION == 1 &&
+          (i === 252 || i === 618),
+        [styles.yield_road]:
+          process.env.REACT_APP_CROSSROAD_VERSION == 1 &&
+          (i === 350 || i === 520),
+        [styles.equal_crossroad]:
+          process.env.REACT_APP_CROSSROAD_VERSION == 2 &&
+          (i === 252 || i === 618 || i === 350 || i === 520),
       });
 
       boardCells.push(<div id={i} key={i} className={className} />);

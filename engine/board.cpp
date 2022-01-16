@@ -46,6 +46,11 @@ int Board::get_current_cars_amount()
   return current_cars_amount;
 }
 
+void Board::set_simulation_status(bool new_simulation_status)
+{
+  simulation_status = new_simulation_status;
+}
+
 void Board::increment_generated_cars_amount()
 {
   generated_cars_amount++;
@@ -67,6 +72,7 @@ Board::Board()
   generated_cars_amount = 0;
   current_cars_amount = 0;
   generated_cars_per_route = {0, 0, 0, 0, 0, 0, 0, 0};
+  simulation_status = true;
 
   for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; ++i)
   {
@@ -493,8 +499,8 @@ void Board::update_positions()
 
 void Board::generate_new_cars(int new_current_car_direction_number, int new_desired_car_direction_number)
 {
-  //  TODO: check whether cell for new car is occupied !
-  // 13, 14, 886, 887,450, 480, 389,419
+  if (!simulation_status)
+    return;
 
   CELL_DIRECTION new_current_car_direction = convert_int_to_cell_direction(new_current_car_direction_number);
   CELL_DIRECTION new_desired_car_direction = convert_int_to_cell_direction(new_desired_car_direction_number);

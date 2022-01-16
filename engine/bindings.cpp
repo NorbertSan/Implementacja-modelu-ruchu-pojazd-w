@@ -16,6 +16,7 @@ EMSCRIPTEN_BINDINGS(board_module)
         .function("get_road_board", &Board::get_road_board, allow_raw_pointer<arg<0>>())
         .function("get_generated_cars_amount", &Board::get_generated_cars_amount)
         .function("get_current_cars_amount", &Board::get_current_cars_amount)
+        .function("set_simulation_status", &Board::set_simulation_status)
         .function("get_generated_cars_per_route", &Board::get_generated_cars_per_route, allow_raw_pointer<arg<0>>());
 }
 
