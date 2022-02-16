@@ -17,12 +17,14 @@ void Board::align_grid_and_temp_grid()
     CELL_DIRECTION new_current_car_direction = temp_grid[j]->get_current_car_direction();
     CELL_DIRECTION new_desired_car_direction = temp_grid[j]->get_desired_car_direction();
     bool new_is_staying = temp_grid[j]->get_is_staying();
+    bool new_will_be_turning = temp_grid[j]->get_will_be_turning();
 
     grid[j]->set_speed(new_speed);
     grid[j]->set_is_occupied(new_is_occupied);
     grid[j]->set_current_car_direction(new_current_car_direction);
     grid[j]->set_desired_car_direction(new_desired_car_direction);
     grid[j]->set_is_staying(new_is_staying);
+    grid[j]->set_will_be_turning(new_will_be_turning);
   }
 }
 
@@ -66,8 +68,9 @@ void Board::calculate_current_cars_amount()
   current_cars_amount = current_cars_amount_temp;
 }
 
-Board::Board()
+Board::Board(int init_main_road)
 {
+  main_road = convert_int_to_main_road(init_main_road);
   middle_cell_indexes = get_middle_cell_indexes();
   generated_cars_amount = 0;
   current_cars_amount = 0;
@@ -137,12 +140,17 @@ Board::Board()
   }
 };
 
-bool Board::can_move_to_cell_in_the_middle(int desired_cell_index, CELL_DIRECTION current_car_direction, bool will_be_turning, bool is_already_in_the_middle)
+bool Board::can_move_to_cell_in_the_middle(int desired_cell_index, CELL_DIRECTION current_car_direction, bool will_be_turning)
 {
   // wystarczy sprawdzic docelowa komorke plus tyle sasiadow co MAX_SPEED_IN_THE_CROSS
   // wtedy mamy pewnosc, ze jezeli nawet jakies auto jest na skrzyzowaniu
   // to nie bedzie kolizji bo ma ograniczona predkosc
   bool can_move = true;
+
+  if (main_road == MAIN_ROAD::UP_DOWN && (current_car_direction == CELL_DIRECTION::DOWN || current_car_direction == CELL_DIRECTION::UP))
+  {
+    return true;
+  }
 
   if (will_be_turning)
   {
@@ -162,11 +170,6 @@ bool Board::can_move_to_cell_in_the_middle(int desired_cell_index, CELL_DIRECTIO
       else if (current_car_direction == CELL_DIRECTION::RIGHT)
         cell_index_to_check = desired_cell_index + (i * BOARD_SIZE);
 
-      // if (grid[cell_index_to_check]->get_is_occupied())
-      // {
-      //   can_move = false;
-      //   break;
-      // }
       if (grid[desired_cell_index]->get_is_occupied())
       {
         can_move = false;
@@ -176,77 +179,118 @@ bool Board::can_move_to_cell_in_the_middle(int desired_cell_index, CELL_DIRECTIO
   }
   else
   {
-
-    int neighbour_cells_need_to_check = MAX_SPEED_IN_THE_CROSS + 2;
-    for (int i = 0; i < neighbour_cells_need_to_check; i++)
+    // zasada prawej reki
+    int cell_index_to_check;
+    if (main_road == MAIN_ROAD::LACK)
     {
-      int cell_index_to_check;
+      int neighbour_cells_need_to_check = MAX_SPEED_IN_THE_CROSS + 2;
+      for (int i = 0; i < neighbour_cells_need_to_check; i++)
+      {
 
-      if (current_car_direction == CELL_DIRECTION::DOWN)
-      {
-        cell_index_to_check = desired_cell_index + i - 2;
-      }
-      else if (current_car_direction == CELL_DIRECTION::UP)
-      {
-        cell_index_to_check = desired_cell_index + i;
-      }
-      else if (current_car_direction == CELL_DIRECTION::LEFT)
-      {
-        cell_index_to_check = desired_cell_index - i * BOARD_SIZE;
-      }
-      else if (current_car_direction == CELL_DIRECTION::RIGHT)
-      {
-        cell_index_to_check = desired_cell_index + i * BOARD_SIZE;
-      }
+        if (current_car_direction == CELL_DIRECTION::DOWN)
+        {
+          cell_index_to_check = desired_cell_index + i - 2;
+        }
+        else if (current_car_direction == CELL_DIRECTION::UP)
+        {
+          cell_index_to_check = desired_cell_index + i;
+        }
+        else if (current_car_direction == CELL_DIRECTION::LEFT)
+        {
+          cell_index_to_check = desired_cell_index - i * BOARD_SIZE;
+        }
+        else if (current_car_direction == CELL_DIRECTION::RIGHT)
+        {
+          cell_index_to_check = desired_cell_index + i * BOARD_SIZE;
+        }
 
-      if (grid[cell_index_to_check]->get_is_occupied())
-      {
-        can_move = false;
-        break;
+        if (grid[cell_index_to_check]->get_is_occupied() && !grid[cell_index_to_check]->get_will_be_turning())
+        {
+          can_move = false;
+          break;
+        }
       }
     }
+    // trzeba przepuszczac auta na glownej drodze, do tego warunku dojdą tylko przypadki gdy current_car_direction == LEFT | RIGHT
+    else
+    {
+      bool can_be_collision = true;
 
-    // is_already_in_the_middle posłuzy do zastosowanie reguly prawej reki i unikniecia sytuacji gdzie dwa auta sie zablokuja wzajemnie
-    // tutaj spradzam tylko czy sa pojazdy naprzeciwko i po prawej stronie, po lewej stronie mnie nie intersuje
-    // tutaj trzeba sprawdzic wszystkie kierunki poniewaz, zasada prawej reki bedzie dzialac dopiero jak wjedzie na skrzyzowanie
-    // else
-    // {
-    //   int neighbour_cells_need_to_check = MAX_SPEED_IN_THE_CROSS + 2;
+      if (current_car_direction == CELL_DIRECTION::LEFT && desired_cell_index == 407)
+      {
+        std::vector<int> cells_to_check;
+        cells_to_check.push_back(desired_cell_index - 1);
+        cells_to_check.push_back(desired_cell_index - 2);
+        for (int j = 0; j < 3 * MAX_SPEED_IN_THE_CROSS + MAX_SPEED; j++)
+        {
+          cells_to_check.push_back(desired_cell_index - 1 - (j * BOARD_SIZE));
+        }
 
-    //   for (int i = 0; i < neighbour_cells_need_to_check; i++)
-    //   {
-    //     int cell_index_to_check_first_row;
-    //     // chyba nie potrzebne, do sprawdzenia
-    //     int cell_index_to_check_second_row;
+        for (const auto &cell_index : cells_to_check)
+          if (grid[cell_index]->get_is_occupied())
+            return false;
 
-    //     if (current_car_direction == CELL_DIRECTION::DOWN)
-    //     {
-    //       cell_index_to_check_first_row = desired_cell_index + i - 1;
-    //       cell_index_to_check_second_row = desired_cell_index + i - 1 + BOARD_SIZE;
-    //     }
-    //     else if (current_car_direction == CELL_DIRECTION::UP)
-    //     {
-    //       cell_index_to_check_first_row = desired_cell_index + i - 1;
-    //       cell_index_to_check_second_row = desired_cell_index + i - 1 - BOARD_SIZE;
-    //     }
-    //     else if (current_car_direction == CELL_DIRECTION::LEFT)
-    //     {
-    //       cell_index_to_check_first_row = desired_cell_index + (i - 1) * BOARD_SIZE;
-    //       cell_index_to_check_second_row = desired_cell_index + (i - 1) * BOARD_SIZE - 1;
-    //     }
-    //     else if (current_car_direction == CELL_DIRECTION::RIGHT)
-    //     {
-    //       cell_index_to_check_first_row = desired_cell_index + (i - 1) * BOARD_SIZE;
-    //       cell_index_to_check_second_row = desired_cell_index + (i - 1) * BOARD_SIZE + 1;
-    //     }
+        return true;
+      }
 
-    //     if (grid[cell_index_to_check_first_row]->get_is_occupied())
-    //     {
-    //       can_move = false;
-    //       break;
-    //     }
-    //   }
-    // }
+      if (current_car_direction == CELL_DIRECTION::RIGHT && desired_cell_index == 463)
+      {
+        std::vector<int> cells_to_check;
+        cells_to_check.push_back(desired_cell_index + 1);
+        cells_to_check.push_back(desired_cell_index + 2);
+        for (int j = 0; j < 3 * MAX_SPEED_IN_THE_CROSS + MAX_SPEED; j++)
+        {
+          cells_to_check.push_back(desired_cell_index + 1 + (j * BOARD_SIZE));
+        }
+
+        for (const auto &cell_index : cells_to_check)
+          if (grid[cell_index]->get_is_occupied())
+            return false;
+
+        return true;
+      }
+
+      int neighbour_cells_need_to_check = MAX_SPEED_IN_THE_CROSS + 2;
+
+      for (int i = 0; i < neighbour_cells_need_to_check; i++)
+      {
+        if (current_car_direction == CELL_DIRECTION::LEFT)
+        {
+          if (desired_cell_index == 406)
+            cell_index_to_check = desired_cell_index + i * BOARD_SIZE;
+          else if (desired_cell_index == 404)
+            cell_index_to_check = desired_cell_index - i * BOARD_SIZE;
+          else
+          {
+            can_be_collision = false;
+            cell_index_to_check = desired_cell_index;
+          }
+        }
+
+        else if (current_car_direction == CELL_DIRECTION::RIGHT)
+        {
+          if (desired_cell_index == 464)
+            cell_index_to_check = desired_cell_index - i * BOARD_SIZE;
+          else if (desired_cell_index == 466)
+            cell_index_to_check = desired_cell_index + i * BOARD_SIZE;
+          else
+          {
+            can_be_collision = false;
+            cell_index_to_check = desired_cell_index;
+          }
+        }
+
+        if (grid[cell_index_to_check]->get_is_occupied())
+        {
+          if (desired_cell_index == cell_index_to_check ||
+              can_be_collision && (grid[cell_index_to_check]->get_current_car_direction() == CELL_DIRECTION::DOWN || grid[cell_index_to_check]->get_current_car_direction() == CELL_DIRECTION::UP))
+          {
+            can_move = false;
+          }
+          break;
+        }
+      }
+    }
   }
 
   return can_move;
@@ -325,6 +369,7 @@ void Board::update_positions()
 
     CELL_DIRECTION old_current_car_direction = grid[i]->get_current_car_direction();
     CELL_DIRECTION old_desired_car_direction = grid[i]->get_desired_car_direction();
+    bool old_will_be_turning = grid[i]->get_will_be_turning();
     bool new_is_staying = grid[i]->get_is_staying();
 
     // porusz się: wyczyść starą pozycje i ustaw nową w temp_grid
@@ -333,6 +378,7 @@ void Board::update_positions()
     temp_grid[i]->set_is_staying(false);
     temp_grid[i]->set_current_car_direction(CELL_DIRECTION::NONE);
     temp_grid[i]->set_desired_car_direction(CELL_DIRECTION::NONE);
+    temp_grid[i]->set_will_be_turning(false);
 
     int new_cell_position_index;
     bool check_if_out_of_horizontal_road = false;
@@ -380,7 +426,7 @@ void Board::update_positions()
     }
 
     // sprawdz czy nastepna pozycja będzie na srodku skrzyzowania
-    if (is_cell_in_the_middle_of_cross(new_cell_position_index))
+    if (is_cell_in_the_middle_of_cross(new_cell_position_index) && (grid[i]->is_turning_required() || !(main_road == MAIN_ROAD::UP_DOWN && (old_current_car_direction == CELL_DIRECTION::UP || old_current_car_direction == CELL_DIRECTION::DOWN))))
     {
       // ustaw na pierwszym miejscu przed skrzyzowaniem
       if (!new_is_staying)
@@ -426,7 +472,7 @@ void Board::update_positions()
           else if (grid[i]->get_current_car_direction() == CELL_DIRECTION::RIGHT)
             desired_cell_index = i + 1;
 
-          if (can_move_to_cell_in_the_middle(desired_cell_index, grid[i]->get_current_car_direction(), true, false))
+          if (can_move_to_cell_in_the_middle(desired_cell_index, grid[i]->get_current_car_direction(), true))
           {
             new_cell_position_index = desired_cell_index;
             has_turned_in_this_round = true;
@@ -450,9 +496,7 @@ void Board::update_positions()
           else if (grid[i]->get_current_car_direction() == CELL_DIRECTION::UP)
             desired_cell_index = i - BOARD_SIZE;
 
-          bool is_old_position_in_the_middle = is_cell_in_the_middle_of_cross(i);
-
-          if (can_move_to_cell_in_the_middle(desired_cell_index, grid[i]->get_current_car_direction(), false, is_old_position_in_the_middle))
+          if (can_move_to_cell_in_the_middle(desired_cell_index, grid[i]->get_current_car_direction(), false))
           {
             new_cell_position_index = desired_cell_index;
             if (!is_cell_in_the_middle_of_cross(new_cell_position_index))
@@ -479,6 +523,7 @@ void Board::update_positions()
       temp_grid[new_cell_position_index]->set_desired_car_direction(old_desired_car_direction);
       temp_grid[new_cell_position_index]->set_speed(new_calculated_speed);
       temp_grid[new_cell_position_index]->set_is_staying(new_is_staying);
+      temp_grid[new_cell_position_index]->set_will_be_turning(old_will_be_turning);
 
       if (has_turned_in_this_round)
       {
@@ -507,12 +552,14 @@ void Board::generate_new_cars(int new_current_car_direction_number, int new_desi
 
   int cell_index;
   int route_index;
+  bool new_will_be_turning = false;
 
   // 1
   if (new_current_car_direction == CELL_DIRECTION::DOWN && new_desired_car_direction == CELL_DIRECTION::LEFT)
   {
     cell_index = 13;
     route_index = 0;
+    new_will_be_turning = true;
   }
   // 2
   else if (new_current_car_direction == CELL_DIRECTION::DOWN && new_desired_car_direction == CELL_DIRECTION::DOWN)
@@ -525,6 +572,7 @@ void Board::generate_new_cars(int new_current_car_direction_number, int new_desi
   {
     cell_index = 389;
     route_index = 2;
+    new_will_be_turning = true;
   }
   // 4
   else if (new_current_car_direction == CELL_DIRECTION::LEFT && new_desired_car_direction == CELL_DIRECTION::LEFT)
@@ -537,6 +585,7 @@ void Board::generate_new_cars(int new_current_car_direction_number, int new_desi
   {
     cell_index = 887;
     route_index = 4;
+    new_will_be_turning = true;
   }
   // 6
   else if (new_current_car_direction == CELL_DIRECTION::UP && new_desired_car_direction == CELL_DIRECTION::UP)
@@ -549,6 +598,7 @@ void Board::generate_new_cars(int new_current_car_direction_number, int new_desi
   {
     cell_index = 480;
     route_index = 6;
+    new_will_be_turning = true;
   }
   // 8
   else if (new_current_car_direction == CELL_DIRECTION::RIGHT && new_desired_car_direction == CELL_DIRECTION::RIGHT)
@@ -567,12 +617,14 @@ void Board::generate_new_cars(int new_current_car_direction_number, int new_desi
   grid[cell_index]->set_current_car_direction(new_current_car_direction);
   grid[cell_index]->set_desired_car_direction(new_desired_car_direction);
   grid[cell_index]->set_is_first_turn(true);
+  grid[cell_index]->set_will_be_turning(new_will_be_turning);
 
   temp_grid[cell_index]->set_speed(random_speed);
   temp_grid[cell_index]->set_is_occupied(true);
   temp_grid[cell_index]->set_current_car_direction(new_current_car_direction);
   temp_grid[cell_index]->set_desired_car_direction(new_desired_car_direction);
   temp_grid[cell_index]->set_is_first_turn(true);
+  temp_grid[cell_index]->set_will_be_turning(new_will_be_turning);
 
   increment_generated_cars_amount();
   increment_generated_cars_per_route(route_index);

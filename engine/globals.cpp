@@ -5,8 +5,9 @@
 // needs to be even number
 int BOARD_SIZE = 30;
 int MAX_POSSIBLE_SPEED = 5;
-int MAX_SPEED = 3;
+int MAX_SPEED = 4;
 // na razie musi byc =1, jest to zwiazane z sprawdzaniem wolnego skrzyzowania przy jezdzie na wprost
+// mozliw, ze jak jest droga glowna to warto zwiekszyc to predkosć do 3, mialoby to sens
 int MAX_SPEED_IN_THE_CROSS = 1;
 
 // in percentage
@@ -210,5 +211,18 @@ CELL_DIRECTION convert_int_to_cell_direction(int cell_direction)
     return CELL_DIRECTION::LEFT;
   default:
     return CELL_DIRECTION::DOWN;
+  }
+}
+
+MAIN_ROAD convert_int_to_main_road(int main_road)
+{
+  switch (main_road)
+  {
+  case 5:
+    return MAIN_ROAD::LACK;
+  case 6:
+    return MAIN_ROAD::UP_DOWN;
+  default:
+    return MAIN_ROAD::LACK;
   }
 }

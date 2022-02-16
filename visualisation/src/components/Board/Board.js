@@ -34,9 +34,9 @@ const Board = ({
       const directionClass = indexDirectionClassDict[i];
       const className = classnames({
         [styles.road]: Boolean(roadVector.get(i)),
+        [styles.middle_cell]: isElementInVector(middleCellIndexes, i),
         [styles.no_road]: !Boolean(roadVector.get(i)),
         [styles[directionClass]]: styles[directionClass],
-        [styles.middle_cell]: isElementInVector(middleCellIndexes, i),
         [styles.main_road]:
           process.env.REACT_APP_CROSSROAD_VERSION == 1 &&
           (i === 252 || i === 618),

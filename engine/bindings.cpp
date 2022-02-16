@@ -9,7 +9,7 @@ EMSCRIPTEN_BINDINGS(board_module)
     register_vector<int>("VectorInt");
 
     class_<Board>("Board")
-        .constructor()
+        .constructor<int>()
         .function("update_positions", &Board::update_positions)
         .function("generate_new_cars", &Board::generate_new_cars)
         .function("get_occupied_board", &Board::get_occupied_board, allow_raw_pointer<arg<0>>())

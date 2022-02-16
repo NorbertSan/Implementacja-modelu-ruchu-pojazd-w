@@ -49,6 +49,7 @@ const App = () => {
 
   return (
     <main className={styles.main}>
+      <div className={styles.compass} />
       {error && <ErrorPage error={error} />}
       {loading && <span>Loading...</span>}
 

@@ -8,6 +8,7 @@ Cell::Cell(bool part_of_road)
   is_part_of_road = part_of_road;
   is_occupied = false;
   is_staying = false;
+  will_be_turning = false;
   speed = 0;
 };
 
@@ -41,6 +42,11 @@ TURNING_DIRECTION Cell::get_turning_direction()
 bool Cell::is_turning_required()
 {
   return current_car_direction != desired_car_direction;
+}
+
+bool Cell::get_will_be_turning()
+{
+  return will_be_turning;
 }
 
 bool Cell::get_is_occupied()
@@ -106,4 +112,9 @@ void Cell::set_is_staying(bool new_is_staying)
 void Cell::set_is_first_turn(bool new_is_first_turn)
 {
   is_first_turn = new_is_first_turn;
+}
+
+void Cell::set_will_be_turning(bool new_will_be_turning)
+{
+  will_be_turning = new_will_be_turning;
 }

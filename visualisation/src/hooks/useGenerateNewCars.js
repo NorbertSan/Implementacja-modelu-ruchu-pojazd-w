@@ -135,17 +135,19 @@ const useGenerateNewCars = (
       if (!CARS_AMOUNT_PER_ROAD_LANE_ARR[i])
         generateCarsIntervalsArr.push(null);
       else {
-        generateCarsIntervalsArr.push(
-          setInterval(() => {
-            const { initialCarDirection, desiredCarDirection } =
-              getCarDirection(i + 1);
+        setTimeout(() => {
+          generateCarsIntervalsArr.push(
+            setInterval(() => {
+              const { initialCarDirection, desiredCarDirection } =
+                getCarDirection(i + 1);
 
-            boardObject.generate_new_cars(
-              initialCarDirection,
-              desiredCarDirection
-            );
-          }, GENERATE_CARS_TIME_INTERVAL)
-        );
+              boardObject.generate_new_cars(
+                initialCarDirection,
+                desiredCarDirection
+              );
+            }, GENERATE_CARS_TIME_INTERVAL)
+          );
+        }, i * 600);
       }
     }
 
@@ -167,13 +169,13 @@ const useGenerateNewCars = (
       }
     }
 
-    // if (
-    //   generateCarsOnLaneIntervals.every((interval) => !Boolean(interval)) &&
-    //   currentCarsAmount === 0 &&
-    //   !hasSimulationFinished
-    // ) {
-    //   setHasSimulationFinished(true);
-    // }
+    if (
+      generateCarsOnLaneIntervals.every((interval) => !Boolean(interval)) &&
+      currentCarsAmount === 0 &&
+      !hasSimulationFinished
+    ) {
+      setHasSimulationFinished(true);
+    }
   }, [generatedCarsPerRoute]);
   return;
 };

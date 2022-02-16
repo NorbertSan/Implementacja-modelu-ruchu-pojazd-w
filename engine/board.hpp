@@ -8,6 +8,7 @@
 
 class Board
 {
+  MAIN_ROAD main_road;
   int generated_cars_amount;
   int current_cars_amount;
   bool simulation_status;
@@ -19,13 +20,13 @@ class Board
   void align_grid_and_temp_grid();
   bool is_cell_in_the_middle_of_cross(int cell_index);
   int calculate_new_speed_riding_straight(CELL_DIRECTION direction, int cell_index);
-  bool can_move_to_cell_in_the_middle(int desired_cell_index, CELL_DIRECTION current_car_direction, bool will_be_turning, bool is_already_in_the_middle);
+  bool can_move_to_cell_in_the_middle(int desired_cell_index, CELL_DIRECTION current_car_direction, bool will_be_turning);
   void increment_generated_cars_amount();
   void calculate_current_cars_amount();
   void increment_generated_cars_per_route(int route_index);
 
 public:
-  Board();
+  Board(int init_main_road);
 
   // Exposed
   std::vector<int> get_generated_cars_per_route();

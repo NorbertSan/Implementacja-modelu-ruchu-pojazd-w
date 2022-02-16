@@ -22,6 +22,12 @@ enum CELL_DIRECTION
     LEFT,
 };
 
+enum MAIN_ROAD
+{
+    LACK = 5,
+    UP_DOWN,
+};
+
 enum TURNING_DIRECTION
 {
     TURNING_LEFT,
@@ -77,5 +83,7 @@ int get_index_for_left_direction_icon();
 int get_index_for_left_right_direction_icon();
 
 CELL_DIRECTION convert_int_to_cell_direction(int cell_direction);
+
+MAIN_ROAD convert_int_to_main_road(int main_road);
 
 #endif

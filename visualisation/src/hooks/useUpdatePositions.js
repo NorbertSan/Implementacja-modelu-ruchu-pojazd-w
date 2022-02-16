@@ -10,16 +10,25 @@ const useUpdatePositions = (
   const [boardOccupancyVector, setBoardOccupancyVector] = useState([]);
   const [updatesAmount, setUpdatesAmount] = useState(0);
   const [currentCarsAmount, setCurrentCarsAmount] = useState(0);
+  const [currentCarsAmountStatistics, setCurrentCarsAmountStatistics] =
+    useState([]);
 
   const intervalRef = useRef(null);
 
   const setUpdatePositionsInterval = () => {
     let updatesAmountTemp = updatesAmount;
 
+    const currentAmountTemp = [];
+
     const interval = setInterval(() => {
       boardObject.update_positions();
       setBoardOccupancyVector(boardObject.get_occupied_board());
-      setCurrentCarsAmount(boardObject.get_current_cars_amount());
+
+      const currentAmount = boardObject.get_current_cars_amount();
+      currentAmountTemp.push(currentAmount);
+      setCurrentCarsAmount(currentAmount);
+
+      setCurrentCarsAmountStatistics(currentAmountTemp);
 
       updatesAmountTemp++;
       setUpdatesAmount(updatesAmountTemp);
@@ -67,6 +76,7 @@ const useUpdatePositions = (
   useEffect(() => {
     if (!boardObject || !hasSimulationFinished) return;
 
+    console.log(currentCarsAmountStatistics.join(";"));
     clearUpdatePositionsInterval();
   }, [hasSimulationFinished]);
 
